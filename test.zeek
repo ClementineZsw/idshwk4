@@ -25,6 +25,34 @@ event http_reply(c: connection, version: string, code: count, reason: string)
 	
 }
 event zeek_done()
+{
+	for( ip in record_table)
 	{
-	print  record_table;
+		local count_404 : double =0;
+		local count_all : double =0;
+		local count_unique_404 : double=0;
+		for(status in record_table[ip])
+		{
+			count_all += record_table[ip][status];
+			if(status == 404)
+			{
+				count_404=record_table[ip][status];
+			}
+		}
+		
+		if(count_404 > 2)
+		{
+			if(count_404 / count_all > 0.2)
+			{
+				if(count_unique_404 / count_404 >0.5)
+				{
+					print count_404/count_all;
+				}
+			}
+		}
+		print count_404;
+		print count_all;
+		print count_unique_404;
 	}
+	print  record_table;
+}
